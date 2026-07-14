@@ -94,10 +94,10 @@ app.post("/benefits", isLoggedIn, isAdmin, benefitsHandler.updateBenefits);
     app.get("/tutorial/:page", (req, res) => {
         const {
             page
-        } = req.params
-        const isValidTutorialPage = /^[a-zA-Z0-9_-]+$/.test(page);
+        } = req.params;
+        const allowedTutorialPages = new Set(["a1"]);
 
-        if (!isValidTutorialPage) {
+        if (!allowedTutorialPages.has(page)) {
             return res.status(404).end();
         }
 
