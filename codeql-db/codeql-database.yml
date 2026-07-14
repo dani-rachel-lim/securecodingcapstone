@@ -1,0 +1,13 @@
+---
+sourceLocationPrefix: /Users/danicarachel.lim/Downloads/securecodingcapstone
+baselineLinesOfCode: 2809
+unicodeNewlines: true
+columnKind: utf16
+primaryLanguage: javascript
+creationMetadata:
+  sha: bf67bb9bab0acd318afc880f3831924b6307f911
+  cliVersion: 2.26.0
+  creationTime: 2026-07-14T06:11:50.288847Z
+overlayBaseDatabase: false
+overlayDatabase: false
+finalised: true

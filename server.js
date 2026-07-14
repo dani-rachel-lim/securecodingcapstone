@@ -5,6 +5,7 @@ const favicon = require("serve-favicon");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const consolidate = require("consolidate"); // Templating library adapter for Express
+const csurf = require("csurf"); // CSRF protection middleware
 const swig = require("swig");
 const MongoClient = require("mongodb").MongoClient; // Driver for connecting to MongoDB
 const http = require("http");
@@ -38,8 +39,11 @@ MongoClient.connect(db, (err, db) => {
         // Both mandatory in Express v4
         saveUninitialized: true,
         resave: true
-
     }));
+    // Enable Helmet for security headers
+    app.use(require('helmet')());
+    // Enable CSRF protection
+    app.use(csurf());
 
     // Register templating engine
     app.engine(".html", consolidate.swig);
@@ -59,8 +63,8 @@ MongoClient.connect(db, (err, db) => {
 
     // Template system setup
     swig.setDefaults({
-        // Autoescape disabled
-        autoescape: false
+        // Enable autoescaping for template safety
+        autoescape: true
     });
 
     // HTTP connection
