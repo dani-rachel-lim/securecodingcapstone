@@ -81,6 +81,12 @@ app.post("/benefits", isLoggedIn, isAdmin, benefitsHandler.updateBenefits);
         const {
             page
         } = req.params
+        const isValidTutorialPage = /^[a-zA-Z0-9_-]+$/.test(page);
+
+        if (!isValidTutorialPage) {
+            return res.status(404).end();
+        }
+
         return res.render(`tutorial/${page}`, {
             environmentalScripts
         });
