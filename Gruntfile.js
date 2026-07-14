@@ -1,6 +1,6 @@
 "use strict";
 
-var exec = require("child_process").exec;
+var execFile = require("child_process").execFile;
 
 var JS_FILES = ["Gruntfile.js", "app/assets/js/**", "config/config.js", "app/data/**/*.js",
     "app/routes/**/*.js", "server.js", "test/**/*.js"
@@ -152,10 +152,11 @@ module.exports = function(grunt) {
         var done;
 
         done = this.async();
-        var cmd = process.platform === "win32" ? "NODE_ENV=" + finalEnv + " & " : "NODE_ENV=" + finalEnv + " ";
 
-        exec(
-            cmd + "node artifacts/db-reset.js",
+        execFile(
+            "node",
+            ["artifacts/db-reset.js"],
+            { env: Object.assign({}, process.env, { NODE_ENV: finalEnv }) },
             function(err, stdout, stderr) {
                 if (err) {
                     grunt.log.error("db-reset:");
