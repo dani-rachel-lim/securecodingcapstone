@@ -59,7 +59,10 @@ function SessionHandler(db) {
             const invalidPasswordErrorMessage = "Invalid password";
             if (err) {
                 if (err.noSuchUser) {
-                    const sanitizedUserNameForLog = String(userName).replace(/(\r\n|\r|\n)/g, "_");
+                    const sanitizedUserNameForLog = String(userName)
+                        .replace(/(\r\n|\r|\n)/g, "_")
+                        .replace(/[^a-zA-Z0-9@._-]/g, "_")
+                        .slice(0, 128);
                     console.log("Error: attempt to login with invalid user: %s", sanitizedUserNameForLog);
 
                     // Fix for A1 - 3 Log Injection - encode/sanitize input for CRLF Injection
