@@ -176,6 +176,11 @@ function SessionHandler(db) {
             return false;
         }
         if (email !== "") {
+            // Guard against overly long inputs that could cause ReDoS
+            if (email.length > 254) {
+                errors.emailError = "Invalid email address";
+                return false;
+            }
             if (!EMAIL_RE.test(email)) {
                 errors.emailError = "Invalid email address";
                 return false;
