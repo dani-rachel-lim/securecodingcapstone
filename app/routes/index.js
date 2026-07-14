@@ -1,10 +1,13 @@
 const SessionHandler = require("./session");
 const ProfileHandler = require("./profile");
 const BenefitsHandler = require("./benefits");
+const rateLimit = require('express-rate-limit'); // rate limiting middleware
 const ContributionsHandler = require("./contributions");
 const AllocationsHandler = require("./allocations");
 const MemosHandler = require("./memos");
-const ResearchHandler = require("./research");
+const UserDAO = require("../data/user-dao").UserDAO;
+const AllocationsDAO = require("../data/allocations-dao").AllocationsDAO;
+// Removed unused ESAPI import
 const {
     environmentalScripts
 } = require("../../config/config");
@@ -33,8 +36,12 @@ const index = (app, db) => {
 
     // Login form
     app.get("/login", sessionHandler.displayLoginPage);
-    app.post("/login", sessionHandler.handleLoginRequest);
-
+    const loginLimiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 5, // limit each IP to 5 login attempts per window
+        message: 'Too many login attempts, please try again later.'
+    });
+    app.post("/login", loginLimiter, sessionHandler.handleLoginRequest);
     // Signup form
     app.get("/signup", sessionHandler.displaySignupPage);
     app.post("/signup", sessionHandler.handleSignup);
@@ -67,11 +74,9 @@ app.post("/benefits", isLoggedIn, isAdmin, benefitsHandler.updateBenefits);
     // Handle redirect for learning resources link
     app.get("/learn", isLoggedIn, (req, res) => {
         const target = req.query.url;
-
         if (typeof target !== "string") {
             return res.redirect("/dashboard");
         }
-
         try {
             const parsed = new URL(target, "http://localhost");
             if (parsed.origin !== "http://localhost") {
