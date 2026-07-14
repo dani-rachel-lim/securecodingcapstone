@@ -12,8 +12,19 @@ function ResearchHandler(db) {
     this.displayResearch = (req, res) => {
 
         if (req.query.symbol) {
-            const url = req.query.url + req.query.symbol;
-            return needle.get(url, (error, newResponse, body) => {
+            const symbol = String(req.query.symbol).trim().toUpperCase();
+            if (!/^[A-Z0-9.\-]{1,10}$/.test(symbol)) {
+                return res.status(400).send("Invalid symbol");
+            }
+
+            const stockApiBaseUrl = "https://stooq.com/q/l/";
+            const requestUrl = new URL(stockApiBaseUrl);
+            requestUrl.searchParams.set("s", symbol);
+            requestUrl.searchParams.set("f", "sd2t2ohlcvn");
+            requestUrl.searchParams.set("h", "");
+            requestUrl.searchParams.set("e", "json");
+
+            return needle.get(requestUrl.toString(), (error, newResponse, body) => {
                 if (!error && newResponse.statusCode === 200) {
                     res.writeHead(200, {
                         "Content-Type": "text/html"
