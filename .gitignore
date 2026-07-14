@@ -21,3 +21,5 @@ report*.html
 
 # e2e
 test/e2e/screenshots/
+
+package-lock.json
