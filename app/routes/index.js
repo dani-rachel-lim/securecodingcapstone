@@ -66,8 +66,22 @@ app.post("/benefits", isLoggedIn, isAdmin, benefitsHandler.updateBenefits);
 
     // Handle redirect for learning resources link
     app.get("/learn", isLoggedIn, (req, res) => {
-        // Insecure way to handle redirects by taking redirect url from query string
-        return res.redirect(req.query.url);
+        const target = req.query.url;
+
+        if (typeof target !== "string") {
+            return res.redirect("/dashboard");
+        }
+
+        try {
+            const parsed = new URL(target, "http://localhost");
+            if (parsed.origin !== "http://localhost") {
+                return res.redirect("/dashboard");
+            }
+
+            return res.redirect(`${parsed.pathname}${parsed.search}${parsed.hash}`);
+        } catch (e) {
+            return res.redirect("/dashboard");
+        }
     });
 
     // Handle redirect for learning resources link
